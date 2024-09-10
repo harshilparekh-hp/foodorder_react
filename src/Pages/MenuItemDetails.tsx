@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useGetMenuItemByIdQuery } from '../Apis/menuItemApi';
-import { menuItemModel, userModel } from '../Interfaces';
+import { menuItemModel } from '../Interfaces';
 import { setMenuItem } from '../Storage/Redux/menuItemSlice';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUpdateShoppingCartMutation } from '../Apis/shoppingCartApi';
 import { MainLoader, MiniLoader } from './Common';
-import { RootState } from '../Storage/Redux/store';
 // USER ID - f1fe7e53-18c7-4d04-b21a-8b08c6189a6d
 
 
@@ -14,7 +13,6 @@ function MenuItemDetails() {
 
   // this menuItemId const must match with the route 
   // <Route path="/menuItemDetails/:menuItemId" element={<MenuItemDetails />}></Route>
-  const userData: userModel = useSelector((state: RootState) => state.userStore);
   const { menuItemId }  = useParams(); 
   const {data, error, isLoading} = useGetMenuItemByIdQuery(menuItemId);
   const navigate = useNavigate();
@@ -24,12 +22,6 @@ function MenuItemDetails() {
   const [updateShoppingCart] = useUpdateShoppingCartMutation();
 
   const handleQuantity = (counter: number) => {
-
-    if(!userData.id){
-      navigate("/login");
-      return;
-    }
-
     let newQuantity = quantity + counter;
 
     if(newQuantity <= 0){
@@ -46,7 +38,7 @@ function MenuItemDetails() {
     const response = await updateShoppingCart({
       menuItemId,
       updateQuantityBy: quantity,
-      userId: userData.id,
+      userId: "f1fe7e53-18c7-4d04-b21a-8b08c6189a6d",
     });
 
     setIsAddingToCart(false);

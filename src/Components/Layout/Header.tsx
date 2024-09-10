@@ -1,9 +1,8 @@
 import React from 'react'
-import { NavLink, useNavigate } from 'react-router-dom';
-import { cartItemModel, userModel } from '../../Interfaces';
+import { NavLink } from 'react-router-dom';
+import { cartItemModel } from '../../Interfaces';
 import { RootState } from '../../Storage/Redux/store';
-import { useDispatch, useSelector } from 'react-redux';
-import { emptyUserState, setLoggedInUser } from '../../Storage/Redux/userAuthSlice';
+import { useSelector } from 'react-redux';
 let logo = require("../../Assets/Images/mango.png");
 
 function Header() {
@@ -13,21 +12,14 @@ function Header() {
     (state: RootState) => state.shoppingCartStore.cartItems ?? []
   );
 
-  const userData: userModel = useSelector((state: RootState) => state.userStore);
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    dispatch(setLoggedInUser({...emptyUserState}));
-    navigate("/login");
-  }
-
   return (
     <div>
       <nav className="navbar navbar-expand-lg bg-dark navbar-dark">
         <div className="container-fluid">
-          <img src={logo} style={{ height: "40px" }} className="m-1" />
+          <NavLink className="nav-link" aria-current="page" to="/">
+            <img src={logo} style={{ height: "40px" }} className="m-1" />
+          </NavLink>
+
           <button
             className="navbar-toggler"
             type="button"
@@ -54,23 +46,9 @@ function Header() {
                   to="/shoppingCart"
                 >
                   <i className="bi bi-cart"></i>{" "}
-                  {userData.id && `(${shoppingCartFromStore.length})`}
-                </NavLink>
-              </li>
-
-              <li className="nav-item">
-                <NavLink className="nav-link" aria-current="page" to="/order/myOrders">
-                  Orders
-                </NavLink>
-              </li>
-
-              {/* <li className="nav-item">
-                <NavLink
-                  className="nav-link"
-                  aria-current="page"
-                  to="/authentication"
-                >
-                  Authentication
+                  {shoppingCartFromStore?.length
+                    ? `(${shoppingCartFromStore.length})`
+                    : ""}
                 </NavLink>
               </li>
 

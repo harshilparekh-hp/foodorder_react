@@ -8,4 +8,4 @@ function inputHelper(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   return tempData;
 }
 
-export default inputHelper
+export default inputHelper;
