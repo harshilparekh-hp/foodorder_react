@@ -1,16 +1,30 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom';
-import { cartItemModel } from '../../Interfaces';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { cartItemModel, userModel } from '../../Interfaces';
 import { RootState } from '../../Storage/Redux/store';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoggedInUser, emptyUserState } from '../../Storage/Redux/userAuthSlice';
 let logo = require("../../Assets/Images/mango.png");
 
 function Header() {
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // fetching shopping cart store from redux store
   const shoppingCartFromStore: cartItemModel[] = useSelector(
     (state: RootState) => state.shoppingCartStore.cartItems ?? []
   );
+
+  const userData: userModel = useSelector(
+    (state: RootState) => state.userStore
+  );
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    dispatch(setLoggedInUser({ ...emptyUserState }));
+    navigate("/");
+  };
 
   return (
     <div>
@@ -60,7 +74,7 @@ function Header() {
                 >
                   Authorization
                 </NavLink>
-              </li> */}
+              </li>
 
 
 
