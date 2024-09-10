@@ -16,7 +16,6 @@ function MenuItemList() {
     const dispatch = useDispatch();
     const {data, isLoading} = useGetMenuItemsQuery(null);
 
-    console.log(data);
     useEffect(() => {
      if(!isLoading){
         dispatch(setMenuItem(data.result));
