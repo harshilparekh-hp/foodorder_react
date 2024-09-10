@@ -1,11 +1,43 @@
-import React from 'react'
-import { menuItemModel } from '../../../Interfaces';
-
+import React, { useState } from 'react'
+import { apiResponse, menuItemModel, userModel } from '../../../Interfaces';
+import { Link, useNavigate } from 'react-router-dom';
+import { useUpdateShoppingCartMutation } from '../../../Apis/shoppingCartApi';
+import { MiniLoader } from '../../../Pages/Common';
+import { toastNotify } from '../../../Helper';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../Storage/Redux/store';
 interface Props {
     menuItem: menuItemModel
 }
 
 function MenuItemCard(props: Props) {
+  const userData: userModel = useSelector((state: RootState) => state.userStore);
+  const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
+  const [updateShoppingCart] = useUpdateShoppingCartMutation();
+  //const userData = useSelector((state: RootState) => state.userAuthStore)
+  const navigate = useNavigate();
+
+  const handleAddToCart = async () => {
+    if(!userData.id){
+      navigate("/login");
+      return;
+    }
+
+    setIsAddingToCart(true);
+
+    const response: apiResponse = await updateShoppingCart({
+      menuItemId: props.menuItem.id,
+      updateQuantityBy: 1,
+      userId: userData.id,
+    });
+
+    if(response.data && response.data.isSuccess){
+      toastNotify("Item added to cart successfully");
+    }
+    setIsAddingToCart(false);
+
+  }
+
   return (
     <div className="col-md-4 col-12 p-4">
       <div
