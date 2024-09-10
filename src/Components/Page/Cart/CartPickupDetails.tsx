@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux';
-import { cartItemModel } from '../../../Interfaces';
-import { RootState } from '../../../Storage/Redux/store';
-import { inputHelper } from '../../../Helper';
-import { MiniLoader } from '../../../Pages/Common';
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { apiResponse, cartItemModel } from "../../../Interfaces";
+import { RootState } from "../../../Storage/Redux/store";
+import { inputHelper } from "../../../Helper";
+import { MiniLoader } from "../../../Pages/Common";
+import { useInitiatePaymentMutation } from "../../../Apis/payment";
+import { useNavigate } from "react-router-dom";
 
 function CartPickupDetails() {
   const [loading, setLoading] = useState(false);
@@ -12,12 +14,14 @@ function CartPickupDetails() {
     (state: RootState) => state.shoppingCartStore.cartItems ?? []
   );
 
+  const userData = useSelector((state: RootState) => state.userStore);
+
   let grandTotal = 0;
   let totalItems = 0;
 
   const initialUserData = {
-    name: "",
-    email: "",
+    name: userData.fullName,
+    email: userData.email,
     phoneNumber: "",
   };
 
@@ -28,18 +32,26 @@ function CartPickupDetails() {
   });
 
   const [userInput, setUserInput] = useState(initialUserData);
+  const [initiatePayment] = useInitiatePaymentMutation();
+  const navigate = useNavigate();
   const handlerUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const tempData = inputHelper(e, userInput);
     setUserInput(tempData);
   };
 
-  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
-    // initiate the payment 
+    // initiate the payment
+    const {data}: apiResponse = await initiatePayment(userData.id);
+    const orderSummary = {grandTotal, totalItems};
+    navigate("/payment", {
+      state: {apiResult: data?.result, userInput, orderSummary} // passing payment component the state on navigate
+    })
+
     // set the loading flag = false;
-  }
+  };
 
   return (
     <div className="border pb-5 pt-3">
@@ -93,14 +105,14 @@ function CartPickupDetails() {
         </div>
         <button
           type="submit"
-          className="btn btn-lg btn-success form-control mt-3" disabled={loading}
+          className="btn btn-lg btn-success form-control mt-3"
+          disabled={loading}
         >
-            {loading ? <MiniLoader /> : "Looks Good? Place Order!"}
-          
+          {loading ? <MiniLoader /> : "Looks Good? Place Order!"}
         </button>
       </form>
     </div>
   );
 }
 
-export default CartPickupDetails
+export default CartPickupDetails;
