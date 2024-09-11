@@ -1,5 +1,5 @@
 import React from "react";
-import { withAuth } from "../../HOC";
+import { withAdminAuth, withAuth } from "../../HOC";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Storage/Redux/store";
 import { useGetOrdersQuery } from "../../Apis/orderApi";
@@ -8,11 +8,10 @@ import { orderDetailModel, orderHeaderModel } from "../../Interfaces";
 import { useNavigate } from "react-router-dom";
 import { getStatusColor } from "../../Helper";
 
-function MyOrders() {
+function AllOrders() {
   const navigate = useNavigate();
 
-  const userId = useSelector((state: RootState) => state.userStore.id);
-  const { data, isLoading } = useGetOrdersQuery(userId);
+  const { data, isLoading } = useGetOrdersQuery("");
   console.log(data);
   
   return (
@@ -66,4 +65,4 @@ function MyOrders() {
   );
 }
 
-export default withAuth(MyOrders);
+export default withAdminAuth(AllOrders);

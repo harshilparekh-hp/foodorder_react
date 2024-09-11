@@ -10,11 +10,15 @@ import ShoppingCart from "./ShoppingCart";
 import Payment from "./Payment";
 import OrderConfirmed from "./Order/OrderConfirmed";
 import MyOrders from "./Order/MyOrders";
+import OrderDetails from "./Order/OrderDetails";
+import AllOrders from "./Order/AllOrders";
+import MenuItemList from "./MenuItem/MenuItemList";
 
 export {
   Home,
   NotFound,
   MenuItemDetails,
+  OrderDetails,
   ShoppingCart,
   Register,
   Login,
@@ -23,5 +27,7 @@ export {
   AccessDenied,
   Payment,
   OrderConfirmed,
-  MyOrders
+  MyOrders,
+  AllOrders,
+  MenuItemList
 };

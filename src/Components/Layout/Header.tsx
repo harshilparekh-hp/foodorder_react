@@ -1,13 +1,16 @@
-import React from 'react'
-import { NavLink, useNavigate } from 'react-router-dom';
-import { cartItemModel, userModel } from '../../Interfaces';
-import { RootState } from '../../Storage/Redux/store';
-import { useDispatch, useSelector } from 'react-redux';
-import { emptyUserState, setLoggedInUser } from '../../Storage/Redux/userAuthSlice';
+import React from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { cartItemModel, userModel } from "../../Interfaces";
+import { RootState } from "../../Storage/Redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  emptyUserState,
+  setLoggedInUser,
+} from "../../Storage/Redux/userAuthSlice";
+import { SD_Roles } from "../../Utility/SD";
 let logo = require("../../Assets/Images/mango.png");
 
 function Header() {
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -53,22 +56,52 @@ function Header() {
                 </NavLink>
               </li>
 
-              <li className="nav-item">
-                <NavLink
-                  className="nav-link"
-                  aria-current="page"
-                  to="/shoppingCart"
-                >
-                  <i className="bi bi-cart"></i>{" "}
-                  {userData.id && `(${shoppingCartFromStore.length})`}
-                </NavLink>
-              </li>
-
-              <li className="nav-item">
-                <NavLink className="nav-link" aria-current="page" to="/order/myOrders">
-                  Orders
-                </NavLink>
-              </li>
+              {userData.role == SD_Roles.ADMIN ? (
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link dropdown-toggle"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Admin Panel
+                  </a>
+                  <ul className="dropdown-menu">
+                    <li style={{cursor: "pointer"}}>
+                      <a
+                        className="dropdown-item"
+                        onClick={() => navigate("/order/myOrders")}
+                      >
+                        My Orders
+                      </a>
+                    </li>
+                    <li>
+                    <a
+                        className="dropdown-item"
+                        onClick={() => navigate("/order/allOrders")}
+                      >
+                        All Orders
+                      </a>
+                    </li>
+                    <li>
+                      <a className="dropdown-item" href="#">
+                        Something else here
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              ) : (
+                <li className="nav-item">
+                  <NavLink
+                    className="nav-link"
+                    aria-current="page"
+                    to="/order/myOrders"
+                  >
+                    Orders
+                  </NavLink>
+                </li>
+              )}
 
               {/* <li className="nav-item">
                 <NavLink
@@ -102,91 +135,16 @@ function Header() {
                 </NavLink>
               </li> */}
 
-
-
-              <li className="nav-item dropdown">
-                <a
-                  className="nav-link dropdown-toggle"
-                  href="#"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
+              <li className="nav-item">
+                <NavLink
+                  className="nav-link"
+                  aria-current="page"
+                  to="/shoppingCart"
                 >
-                  Admin Panel
-                </a>
-                <ul className="dropdown-menu">
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Action
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Another action
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Something else here
-                    </a>
-                  </li>
-                </ul>
+                  <i className="bi bi-cart"></i>{" "}
+                  {userData.id && `(${shoppingCartFromStore.length})`}
+                </NavLink>
               </li>
-
-              <div className="d-flex" style={{ marginLeft: "auto" }}>
-                {userData.id && (
-                  <>
-                    <li className="nav-item">
-                      <button
-                        className="btn btn-success btn-outlined rounded-pill text-white mx-2"
-                        style={{
-                          border: "none",
-                          height: "40px",
-                          width: "100px",
-                        }}
-                        onClick={handleLogout}
-                      >
-                        Logout
-                      </button>
-                    </li>
-                    <li className="nav-item">
-                      <button
-                        className="nav-link active"
-                        style={{
-                          cursor: "pointer",
-                          background: "transparent",
-                          border: 0,
-                        }}
-                      >
-                        Welcome, {userData.fullName}
-                      </button>
-                    </li>
-                  </>
-                )}
-
-                {!userData.id && (
-                  <>
-                    <li className="nav-item text-white">
-                      <NavLink className="nav-link" to="/register">
-                        Register
-                      </NavLink>
-                    </li>
-                    <li className="nav-item text-white">
-                      <NavLink
-                        className="btn btn-success btn-outlined rounded-pill text-white mx-2"
-                        style={{
-                          border: "none",
-                          height: "40px",
-                          width: "100px",
-                        }}
-                        to="/login"
-                      >
-                        Login
-                      </NavLink>
-                    </li>
-                  </>
-                )}
-              </div>
 
               <div className="d-flex" style={{ marginLeft: "auto" }}>
                 {userData.id && (
@@ -250,5 +208,4 @@ function Header() {
   );
 }
 
-export default Header
-
+export default Header;
